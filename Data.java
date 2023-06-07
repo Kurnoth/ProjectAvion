@@ -1,4 +1,5 @@
-package mapper;
+package ProjectAvion;
+
 public abstract class Data {
 	static private int i = 0;
 	static double tab[][] = { 

@@ -1,4 +1,5 @@
-package mapper;
+package ProjectAvion;
+
 public class Pos {
 	private double latitude;
 	private double longitude;

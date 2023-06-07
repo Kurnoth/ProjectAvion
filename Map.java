@@ -1,4 +1,5 @@
-package mapper;
+package ProjectAvion;
+
 public class Map {
 	private Pos positionAirport;
 

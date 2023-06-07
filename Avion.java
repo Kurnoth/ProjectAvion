@@ -1,4 +1,4 @@
-package mapper;
+package ProjectAvion;
 public class Avion {
 	private int flightNumber;
 	private double latitude;
