@@ -16,6 +16,7 @@ public class Map {
 			}
 			try {
 				Thread.sleep(6000);
+				Data.setI(0);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

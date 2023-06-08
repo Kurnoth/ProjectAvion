@@ -36,16 +36,16 @@ public abstract class Data {
 	public static Avion getNextAircraft() {
 		
 		if (listeAvions.size() == 0)
-			listeAvions = initAvions();
-		// La variable i doit être remise à zero à chaque raffrichissement (probalement à implémenter dans une autre méthode )
-		
+			listeAvions = initAvions();		
 		if (listeAvions.size() - 1 > i) {
 			i++;
 			return listeAvions.get(i);
 		}
 		return null;
 	}
-	
 
+	public static void setI(int i) {
+		Data.i = i;
+	}
 
 }
