@@ -2,6 +2,7 @@ package ProjectAvion.src;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
+import java.lang.Math;
 
 public abstract class Data {
 	static private int i = 0;
@@ -48,4 +49,27 @@ public abstract class Data {
 		Data.i = i;
 	}
 
+	public void updatePosition(ArrayList<> planes) {
+		//time, in second
+		double time = 15;
+		//earth radius, in meter
+		double earthRadius = 6371000;
+
+		for (Avion plane : planes) {
+			//conversion speed, from nautical mile to meter per second
+			double speedMeterPerSecond = plane.getVitesse() * 1852 / 3600;
+			//conversion cap, from degree to radian
+			double capRadian = Math.toRadians(plane.getCap());
+			//distance calculation
+			double distance = speedMeterPerSecond * time;
+			//conversion latitude, from degree to radian
+			double latitudeRadian = Math.toRadians(plane.getLatitude());
+			//latitude calculation
+			//lat_dest = arcsin(sin(lat_orig) * cos(dist/rayon Terre) + cos(lat_orig) * sin(dist/rayon Terre) * cos(cap))
+			plane.setLatitude(Math.toDegrees(Math.arcsin(Math.sin(latitudeRadian) * Math.cos(distance/earthRadius) + Math.cos(latitudeRadian) * Math.sin(distance/earthRadius) * Math.cos(capRadian))));
+			//longitude calculation
+			//long_dest = long_orig + atan2(sin(cap) * sin(dist/rayon Terre) * cos(lat_orig), cos(dist/rayon Terre) - sin(lat_orig) * sin(lat_dest))
+			plane.setLongitude(Math.toDegrees(Math.toRadians(plane.getLongitude()) + Math.atan2(Math.sin(capRadian) * Math.sin(distance/earthRadius) * Math.cos(latitudeRadian), Math.cos(distance/earthRadius) - Math.sin(latitudeRadian) * Math.sin(Math.toRadians(plane.getLatitude())))))
+		}
+	}
 }
