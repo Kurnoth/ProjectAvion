@@ -13,7 +13,7 @@ public abstract class Data {
 			{ 400, 48.5584, 3.6652, 165, 2000, 90 },
 			{ 500, 18.5452, 2.7010, 160, 1200, 40 } };
 		*/
-	private static ArrayList<Avion> listeAvions = new ArrayList<Avion>();
+	private static ArrayList<Avion> listeAvions = new ArrayList<>();
 
 
 	public static ArrayList<Avion> initAvions() {
@@ -38,8 +38,7 @@ public abstract class Data {
 		
 		if (listeAvions.size() == 0)
 			listeAvions = initAvions();		
-		if (listeAvions.size() - 1 > i) {
-			i++;
+		if (i < listeAvions.size()) {
 			return listeAvions.get(i);
 		}
 		return null;
@@ -49,15 +48,19 @@ public abstract class Data {
 		Data.i = i;
 	}
 
-	public void updatePosition(ArrayList<> planes) {
+	public static int getI() {
+		return i;
+	}
+
+	public static void updatePosition() {
 		//time, in second
 		double time = 15;
 		//earth radius, in meter
 		double earthRadius = 6371000;
 
-		for (Avion plane : planes) {
+		for (Avion plane : listeAvions) {
 			//conversion speed, from nautical mile to meter per second
-			double speedMeterPerSecond = plane.getVitesse() * 1852 / 3600;
+			double speedMeterPerSecond = plane.getVitesse() * 1852.0 / 3600.0;
 			//conversion cap, from degree to radian
 			double capRadian = Math.toRadians(plane.getCap());
 			//distance calculation
@@ -66,10 +69,13 @@ public abstract class Data {
 			double latitudeRadian = Math.toRadians(plane.getLatitude());
 			//latitude calculation
 			//lat_dest = arcsin(sin(lat_orig) * cos(dist/rayon Terre) + cos(lat_orig) * sin(dist/rayon Terre) * cos(cap))
-			plane.setLatitude(Math.toDegrees(Math.arcsin(Math.sin(latitudeRadian) * Math.cos(distance/earthRadius) + Math.cos(latitudeRadian) * Math.sin(distance/earthRadius) * Math.cos(capRadian))));
+			plane.setLatitude(Math.toDegrees(Math.asin(Math.sin(latitudeRadian) * Math.cos(distance/earthRadius) + Math.cos(latitudeRadian) * Math.sin(distance/earthRadius) * Math.cos(capRadian))));
 			//longitude calculation
 			//long_dest = long_orig + atan2(sin(cap) * sin(dist/rayon Terre) * cos(lat_orig), cos(dist/rayon Terre) - sin(lat_orig) * sin(lat_dest))
-			plane.setLongitude(Math.toDegrees(Math.toRadians(plane.getLongitude()) + Math.atan2(Math.sin(capRadian) * Math.sin(distance/earthRadius) * Math.cos(latitudeRadian), Math.cos(distance/earthRadius) - Math.sin(latitudeRadian) * Math.sin(Math.toRadians(plane.getLatitude())))))
+			plane.setLongitude(Math.toDegrees(Math.toRadians(plane.getLongitude()) + Math.atan2(Math.sin(capRadian) * Math.sin(distance/earthRadius) * Math.cos(latitudeRadian), Math.cos(distance/earthRadius) - Math.sin(latitudeRadian) * Math.sin(Math.toRadians(plane.getLatitude())))));
+			//round to 4 decimal places
+			plane.setLatitude(Math.round(plane.getLatitude() * 10000.0) / 10000.0);
+			plane.setLongitude(Math.round(plane.getLongitude() * 10000.0) / 10000.0);
 		}
 	}
 }

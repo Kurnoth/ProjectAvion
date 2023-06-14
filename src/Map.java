@@ -10,13 +10,15 @@ public class Map {
 			System.out.println("===");
 			Avion a;
 			while ((a = Data.getNextAircraft()) != null) {
-				if (positionAirport.closeAirport(a.getPosition())) {
+				//if (positionAirport.closeAirport(a.getPosition())) {
 					System.out.println(a);
-				}
+					Data.setI(Data.getI() + 1);
+				//}
 			}
 			try {
 				Thread.sleep(6000);
 				Data.setI(0);
+				Data.updatePosition();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
