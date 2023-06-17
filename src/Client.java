@@ -18,8 +18,16 @@ public class Client {
 
     private static final int SERVER_PORT = 2000;
     static ArrayList<Avion> listAvions = new ArrayList<>();
+    static Pos radar;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
+
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Veuillez rentrer la latitude et la longitude de votre radar comme suit : latitude longitude");
+        String pos = sc.nextLine();
+        String[] tabPos = pos.split(" ");
+        radar = new Pos(Double.parseDouble(tabPos[0]), Double.parseDouble(tabPos[1]));
+
 
         Thread getDataThread = new Thread(new DataRequester());
         getDataThread.start();
@@ -27,7 +35,6 @@ public class Client {
 
         InetAddress ip = InetAddress.getLocalHost();
         DatagramSocket ds = new DatagramSocket();
-        Scanner sc = new Scanner(System.in);
 
         while (true) {
             System.out.println("Pour changer les ordres de changement de l'avion veuillez procéder comme suis : Numéro_avion vitesse altitude cap, avec seulement des nombres positifs");
@@ -92,10 +99,9 @@ public class Client {
             try {
                 while (true) {
                     Client.listAvions = getData();
-                    for (Avion a : listAvions) {
-                        System.out.println(a);
-                    }
-                    Thread.sleep(10000);
+                    
+                    Map r = new Map(radar, listAvions);
+                    Thread.sleep(16000);
                 }
             } catch (InterruptedException | IOException | ClassNotFoundException e) {
                 e.printStackTrace();

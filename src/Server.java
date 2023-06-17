@@ -20,6 +20,9 @@ public class Server {
         byte[] receive = new byte[65535];
 		ArrayList<Avion> avionList = Data.initAvions();
 
+		Thread updateThread = new Thread(new DataUpdater());
+		updateThread.start();
+
 
         while (true) {
 
@@ -56,4 +59,19 @@ public class Server {
         }
 
     }
+
+	private static class DataUpdater implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				while (true) {
+					Data.updatePosition();
+					Thread.sleep(15000);
+				}
+			} catch (InterruptedException e) {
+					e.printStackTrace();
+			}
+		}
+	}
 }
