@@ -1,26 +1,17 @@
 package ProjectAvion.src;
 
+import java.util.ArrayList;
+
 public class Map {
 	private Pos positionAirport;
 
-	public Map(Pos p) {
+	public Map(Pos p, ArrayList<Avion> avions) {
 		this.positionAirport = p;
 
-		while (true) {
-			System.out.println("===");
-			Avion a;
-			while ((a = Data.getNextAircraft()) != null) {
-				if (positionAirport.closeAirport(a.getPosition())) {
-					System.out.println(a);
-				}
-			}
-			try {
-				Thread.sleep(6000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		System.out.println("===");
+		for (Avion a : avions) {
+			if (positionAirport.closeAirport(a.getPosition()))
+				System.out.println(a);
 		}
-
 	}
-
 }
