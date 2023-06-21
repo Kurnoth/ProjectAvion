@@ -39,7 +39,14 @@ public class Server {
 				ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 				Avion avion = (Avion) objectInputStream.readObject();
 				System.out.println(avion);
-				//appelle de fonction pour changer l'avion dans la liste
+
+				for (Avion plane : avionList) {
+					if (plane.getFlightNumber() == avion.getFlightNumber()) {
+						plane.setVitesse(avion.getAltitude());
+						plane.setAltitude(avion.getAltitude());
+						plane.setCap(avion.getCap());
+					}
+				}
 			} else {
 
 				InetAddress clientAddress = dpReceive.getAddress();
