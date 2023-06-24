@@ -8,17 +8,44 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.util.ArrayList;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class Server {
     
 	private static final int SERVER_PORT = 2000;
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+	private static final String URL = "jdbc:mysql://localhost:3306/AvionsData";
+	private static final String USER = "root";
+	private static final String PASS = "password";
+
+	static Connection connexion = null;
+	static PreparedStatement statement = null;
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException{
         
+		Class.forName("com.mysql.cj.jdbc.Driver");
         DatagramSocket ds = new DatagramSocket(SERVER_PORT);
         byte[] receive = new byte[65535];
 		ArrayList<Avion> avionList = Data.initAvions();
+
+		connexion = DriverManager.getConnection(URL, USER, PASS);
+		String requete = "INSERT INTO AvionsData (FlightNumber, Latitude, Longitude, Vitesse, Altitude, Cap) VALUES (?, ?, ?, ?, ?, ?)";
+		statement = connexion.prepareStatement(requete);
+		for (Avion a : avionList) {
+			statement.setInt(1, a.getFlightNumber());
+			statement.setDouble(2, a.getLatitude());
+			statement.setDouble(3, a.getLongitude());
+			statement.setInt(4, a.getVitesse());
+			statement.setInt(5, a.getAltitude());
+			statement.setInt(6, a.getCap());
+			statement.executeUpdate();
+		}
+		statement.close();
+		connexion.close();
 
 		Thread updateThread = new Thread(new DataUpdater());
 		updateThread.start();
@@ -33,16 +60,25 @@ public class Server {
 			byte[] data = dpReceive.getData();
 			int dataSize = dpReceive.getLength();
 
-			System.out.println(dataSize);
 			if (dataSize != 0) {
 				ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
 				ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 				Avion avion = (Avion) objectInputStream.readObject();
-				System.out.println(avion);
+
+				connexion = DriverManager.getConnection(URL, USER, PASS);
+				requete = "INSERT INTO Ordre (FlightNumber, Vitesse, Altitude, Cap) VALUES (?, ?, ?, ?)";
+				statement = connexion.prepareStatement(requete);
+				statement.setInt(1, avion.getFlightNumber());
+				statement.setInt(2, avion.getVitesse());
+				statement.setInt(3, avion.getAltitude());
+				statement.setInt(4, avion.getCap());
+				statement.executeUpdate();
+				statement.close();
+				connexion.close();
 
 				for (Avion plane : avionList) {
 					if (plane.getFlightNumber() == avion.getFlightNumber()) {
-						plane.setVitesse(avion.getAltitude());
+						plane.setVitesse(avion.getVitesse());
 						plane.setAltitude(avion.getAltitude());
 						plane.setCap(avion.getCap());
 					}
@@ -74,10 +110,28 @@ public class Server {
 			try {
 				while (true) {
 					Data.updatePosition();
+					connexion = DriverManager.getConnection(URL, USER, PASS);
+					String requete = "INSERT INTO AvionsData (FlightNumber, Latitude, Longitude, Vitesse, Altitude, Cap) VALUES (?, ?, ?, ?, ?, ?)";
+					statement = connexion.prepareStatement(requete);
+					for (Avion a : Data.getListeAvions()) {
+						statement.setInt(1, a.getFlightNumber());
+						statement.setDouble(2, a.getLatitude());
+						statement.setDouble(3, a.getLongitude());
+						statement.setInt(4, a.getVitesse());
+						statement.setInt(5, a.getAltitude());
+						statement.setInt(6, a.getCap());
+						statement.executeUpdate();
+					}
+					statement.close();
+					connexion.close();
+
 					Thread.sleep(15000);
 				}
 			} catch (InterruptedException e) {
 					e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+
 			}
 		}
 	}

@@ -5,14 +5,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
 
 public class Client {
 
@@ -47,27 +45,27 @@ public class Client {
             String[] tab = inp.split(" ");
             if (tab.length < 4) {
                 System.out.println("Pas assez de données");
-                break;
-            }
-            int[] intTab = new int[tab.length];
-            for (int i = 0; i < tab.length; i++) {
-                intTab[i] = Integer.parseInt(tab[i]);
-            }
-
-            if (intTab[3] > 360 || intTab[1] < 0 || intTab[2] < 0 || intTab[3] < 0) {
-                System.out.println("Erreurs dans les données envoyées");
-
-            } else if (checkFlight(intTab[0]) == false) {
-                System.out.println("Mauvais numéro de vol");
             } else {
-                Avion modifiedAvion = modifyAvion(intTab);
+                int[] intTab = new int[tab.length];
+                for (int i = 0; i < tab.length; i++) {
+                    intTab[i] = Integer.parseInt(tab[i]);
+                }
 
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                objectOutputStream.writeObject(modifiedAvion);
-                byte[] sendData = outputStream.toByteArray();
-                DatagramPacket avionToSend = new DatagramPacket(sendData, sendData.length, ip, SERVER_PORT);
-                ds.send(avionToSend);
+                if (intTab[3] > 360 || intTab[1] < 0 || intTab[2] < 0 || intTab[3] < 0) {
+                    System.out.println("Erreurs dans les données envoyées");
+
+                } else if (checkFlight(intTab[0]) == false) {
+                    System.out.println("Mauvais numéro de vol");
+                } else {
+                    Avion modifiedAvion = modifyAvion(intTab);
+
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+                    objectOutputStream.writeObject(modifiedAvion);
+                    byte[] sendData = outputStream.toByteArray();
+                    DatagramPacket avionToSend = new DatagramPacket(sendData, sendData.length, ip, SERVER_PORT);
+                    ds.send(avionToSend);
+                }
             }
         }
     }
@@ -97,10 +95,11 @@ public class Client {
         @Override
         public void run() {
             try {
+                Map r = new Map(radar);
                 while (true) {
                     Client.listAvions = getData();
                     
-                    Map r = new Map(radar, listAvions);
+                    r.display(listAvions);
                     Thread.sleep(16000);
                 }
             } catch (InterruptedException | IOException | ClassNotFoundException e) {
