@@ -1,73 +1,78 @@
 package ProjectAvion.src;
 
+import java.io.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client {
 
     private static final int SERVER_PORT = 2000;
+    private static InetAddress ip;
+    private static DatagramSocket ds;
     static ArrayList<Avion> listAvions = new ArrayList<>();
     static Pos radar;
+    static InitFrame initFrame;
+    static MainFrame mainFrame;
+    static StringReader stringReader;
+    static String input;
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException {
+        initFrame = new InitFrame();
+        //instruction to wait for window close before continuing
+        initFrame.setModal(true);
+        initFrame.setVisible(true);
 
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Veuillez rentrer la latitude et la longitude de votre radar comme suit : latitude longitude");
-        String pos = sc.nextLine();
-        String[] tabPos = pos.split(" ");
-        radar = new Pos(Double.parseDouble(tabPos[0]), Double.parseDouble(tabPos[1]));
+        System.out.println("radar : " + radar.getLatitude() + " " + radar.getLongitude());
 
+        mainFrame = new MainFrame();
 
         Thread getDataThread = new Thread(new DataRequester());
         getDataThread.start();
 
 
-        InetAddress ip = InetAddress.getLocalHost();
-        DatagramSocket ds = new DatagramSocket();
+        ip = InetAddress.getLocalHost();
+        ds = new DatagramSocket();
+
+        input = "";
+        stringReader = new StringReader(input);
+        Scanner sc = new Scanner(stringReader);
 
         while (true) {
-            System.out.println("Pour changer les ordres de changement de l'avion veuillez procéder comme suis : Numéro_avion vitesse altitude cap, avec seulement des nombres positifs");
+            //System.out.println("Pour changer les ordres de changement de l'avion veuillez procéder comme suis : Numéro_avion vitesse altitude cap, avec seulement des nombres positifs");
             String inp = sc.nextLine();
 
-            if (inp.equals("exit")) {
-                getDataThread.interrupt();
-                return;
-            }
             String[] tab = inp.split(" ");
             if (tab.length < 4) {
                 System.out.println("Pas assez de données");
-                break;
-            }
-            int[] intTab = new int[tab.length];
-            for (int i = 0; i < tab.length; i++) {
-                intTab[i] = Integer.parseInt(tab[i]);
-            }
-
-            if (intTab[3] > 360 || intTab[1] < 0 || intTab[2] < 0 || intTab[3] < 0) {
-                System.out.println("Erreurs dans les données envoyées");
-
-            } else if (checkFlight(intTab[0]) == false) {
-                System.out.println("Mauvais numéro de vol");
             } else {
-                Avion modifiedAvion = modifyAvion(intTab);
+                int[] intTab = new int[tab.length];
+                for (int i = 0; i < tab.length; i++) {
+                    intTab[i] = Integer.parseInt(tab[i]);
+                }
 
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                objectOutputStream.writeObject(modifiedAvion);
-                byte[] sendData = outputStream.toByteArray();
-                DatagramPacket avionToSend = new DatagramPacket(sendData, sendData.length, ip, SERVER_PORT);
-                ds.send(avionToSend);
+                if (intTab[3] > 360 || intTab[1] < 0 || intTab[2] < 0 || intTab[3] < 0) {
+                    System.out.println("Erreurs dans les données envoyées");
+
+                } else if (checkFlight(intTab[0]) == false) {
+                    System.out.println("Mauvais numéro de vol");
+                } else {
+                    Avion modifiedAvion = modifyAvion(intTab);
+
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+                    objectOutputStream.writeObject(modifiedAvion);
+                    byte[] sendData = outputStream.toByteArray();
+                    DatagramPacket avionToSend = new DatagramPacket(sendData, sendData.length, ip, SERVER_PORT);
+                    ds.send(avionToSend);
+                }
             }
         }
     }
@@ -97,10 +102,13 @@ public class Client {
         @Override
         public void run() {
             try {
+                Map r = new Map(radar);
                 while (true) {
                     Client.listAvions = getData();
-                    
-                    Map r = new Map(radar, listAvions);
+
+                    r.display(listAvions);
+                    mainFrame.radarPanel.updatePoint();
+                    mainFrame.radarPanel.repaint();
                     Thread.sleep(16000);
                 }
             } catch (InterruptedException | IOException | ClassNotFoundException e) {
@@ -129,4 +137,27 @@ public class Client {
         }
     }
 
+    public static void createRadar(double latitude, double longitude) {
+        radar = new Pos(latitude, longitude);
+    }
+
+    public static ArrayList<Avion> getListAvions() {
+        return listAvions;
+    }
+
+    public static Pos getRadar() {
+        return radar;
+    }
+
+    public static int getServerPort() {
+        return SERVER_PORT;
+    }
+
+    public static InetAddress getIp() {
+        return ip;
+    }
+
+    public static DatagramSocket getDs() {
+        return ds;
+    }
 }

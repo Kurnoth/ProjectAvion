@@ -27,4 +27,10 @@ public class Pos {
 		}
 		return false;
 	}
+
+	public double getDistanceMax() {
+		return distanceMax;
+	}
+
+	
 }

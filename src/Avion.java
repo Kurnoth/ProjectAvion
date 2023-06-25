@@ -35,10 +35,6 @@ public class Avion implements Serializable{
 		return flightNumber;
 	}
 
-	public void setFlightNumber(int flightNumber) {
-		this.flightNumber = flightNumber;
-	}
-
 	public double getLatitude() {
 		return latitude;
 	}
