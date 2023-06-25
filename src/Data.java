@@ -71,5 +71,10 @@ public abstract class Data {
 			plane.setLatitude(Math.round(plane.getLatitude() * 10000.0) / 10000.0);
 			plane.setLongitude(Math.round(plane.getLongitude() * 10000.0) / 10000.0);
 		}
+		
+	}
+
+	public static ArrayList<Avion> getListeAvions() {
+		return listeAvions;
 	}
 }
