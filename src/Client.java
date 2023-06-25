@@ -102,10 +102,10 @@ public class Client {
         @Override
         public void run() {
             try {
+                Map r = new Map(radar);
                 while (true) {
                     Client.listAvions = getData();
 
-                    Map r = new Map(radar, listAvions);
                     r.display(listAvions);
                     mainFrame.radarPanel.updatePoint();
                     mainFrame.radarPanel.repaint();
