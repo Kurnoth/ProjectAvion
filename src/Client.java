@@ -17,20 +17,16 @@ public class Client {
     private static final int SERVER_PORT = 2000;
     private static InetAddress ip;
     private static DatagramSocket ds;
-    static ArrayList<Avion> listAvions = new ArrayList<>();
-    static Pos radar;
-    static InitFrame initFrame;
-    static MainFrame mainFrame;
-    static StringReader stringReader;
+    private static ArrayList<Avion> listAvions = new ArrayList<>();
+    private static Pos radar;
+    private static MainFrame mainFrame;
     static String input;
 
     public static void main(String[] args) throws IOException {
-        initFrame = new InitFrame();
+        InitFrame initFrame = new InitFrame();
         //instruction to wait for window close before continuing
         initFrame.setModal(true);
         initFrame.setVisible(true);
-
-        System.out.println("radar : " + radar.getLatitude() + " " + radar.getLongitude());
 
         mainFrame = new MainFrame();
 
@@ -42,11 +38,10 @@ public class Client {
         ds = new DatagramSocket();
 
         input = "";
-        stringReader = new StringReader(input);
+        StringReader stringReader = new StringReader(input);
         Scanner sc = new Scanner(stringReader);
 
         while (true) {
-            //System.out.println("Pour changer les ordres de changement de l'avion veuillez procéder comme suis : Numéro_avion vitesse altitude cap, avec seulement des nombres positifs");
             String inp = sc.nextLine();
 
             String[] tab = inp.split(" ");
@@ -105,10 +100,9 @@ public class Client {
                 Map r = new Map(radar);
                 while (true) {
                     Client.listAvions = getData();
-
                     r.display(listAvions);
-                    mainFrame.radarPanel.updatePoint();
-                    mainFrame.radarPanel.repaint();
+                    mainFrame.getRadarPanel().updatePoint();
+                    mainFrame.getRadarPanel().repaint();
                     Thread.sleep(16000);
                 }
             } catch (InterruptedException | IOException | ClassNotFoundException e) {
@@ -159,5 +153,9 @@ public class Client {
 
     public static DatagramSocket getDs() {
         return ds;
+    }
+
+    public static MainFrame getMainFrame() {
+        return mainFrame;
     }
 }

@@ -19,14 +19,14 @@ public class Server {
     
 	private static final int SERVER_PORT = 2000;
 	private static final String URL = "jdbc:mysql://localhost:3306/AvionsData";
+	//don't forget to change your id if necessary
 	private static final String USER = "root";
 	private static final String PASS = "password";
 
 	static Connection connexion = null;
 	static PreparedStatement statement = null;
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException{
-        
+    public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
         DatagramSocket ds = new DatagramSocket(SERVER_PORT);
         byte[] receive = new byte[65535];
@@ -52,8 +52,6 @@ public class Server {
 
 
         while (true) {
-
-		
             DatagramPacket dpReceive = new DatagramPacket(receive, receive.length);
             ds.receive(dpReceive);	
 			
@@ -83,11 +81,10 @@ public class Server {
 						plane.setCap(avion.getCap());
 					}
 				}
-			} else {
-
+			}
+			else {
 				InetAddress clientAddress = dpReceive.getAddress();
 				int clientPort = dpReceive.getPort();
-
 
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
@@ -104,7 +101,6 @@ public class Server {
     }
 
 	private static class DataUpdater implements Runnable {
-
 		@Override
 		public void run() {
 			try {
@@ -113,6 +109,7 @@ public class Server {
 					connexion = DriverManager.getConnection(URL, USER, PASS);
 					String requete = "INSERT INTO AvionsData (FlightNumber, Latitude, Longitude, Vitesse, Altitude, Cap) VALUES (?, ?, ?, ?, ?, ?)";
 					statement = connexion.prepareStatement(requete);
+
 					for (Avion a : Data.getListeAvions()) {
 						statement.setInt(1, a.getFlightNumber());
 						statement.setDouble(2, a.getLatitude());
@@ -127,11 +124,8 @@ public class Server {
 
 					Thread.sleep(15000);
 				}
-			} catch (InterruptedException e) {
+			} catch (InterruptedException | SQLException e) {
 					e.printStackTrace();
-			} catch (SQLException e) {
-				e.printStackTrace();
-
 			}
 		}
 	}

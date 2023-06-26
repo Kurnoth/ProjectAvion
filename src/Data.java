@@ -5,9 +5,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.lang.Math;
 
 public abstract class Data {
-	static private int i = 0;
-	
-	private static ArrayList<Avion> listeAvions = new ArrayList<>();
+
+	private static final ArrayList<Avion> listeAvions = new ArrayList<>();
 
 
 	public static ArrayList<Avion> initAvions() {
@@ -26,24 +25,6 @@ public abstract class Data {
 		}
 		System.out.println("EndInit");
 		return listeAvions;		
-	}
-
-	public static Avion getNextAircraft() {
-		
-		if (listeAvions.size() == 0)
-			listeAvions = initAvions();		
-		if (i < listeAvions.size()) {
-			return listeAvions.get(i);
-		}
-		return null;
-	}
-
-	public static void setI(int i) {
-		Data.i = i;
-	}
-
-	public static int getI() {
-		return i;
 	}
 
 	public static void updatePosition() {

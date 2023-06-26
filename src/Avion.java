@@ -3,7 +3,8 @@ package ProjectAvion.src;
 import java.io.Serializable;
 
 public class Avion implements Serializable{
-	private int flightNumber;
+
+	private final int flightNumber;
 	private double latitude;
 	private double longitude;
 	private int vitesse;
@@ -18,18 +19,17 @@ public class Avion implements Serializable{
 		this.altitude = alt;
 		this.cap = c;
 	}
+
 	public Pos getPosition() {
 		return new Pos(this.latitude, this.longitude);
 	}
 
+	@Override
 	public String toString() {
 		return "flightNumber:" + flightNumber + " - latitude : " + latitude
 				+ " - longitude : " + longitude + " - vitesse : " + vitesse
 				+ " - altitude : " + altitude + " - cap : " + cap;
 	}
-	
-	// il faut que j'implémente ici une méthode qui doit faire avancer l'avion après 15 secondes 
-	// peu etre c'est mieu de donner le temps en paramètre ... 
 
 	public int getFlightNumber() {
 		return flightNumber;

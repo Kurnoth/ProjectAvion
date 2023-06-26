@@ -7,11 +7,12 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class RadarPanel extends JPanel {
+
     //radius of the point representing a plane
     int smallCircleRadius = 10;
 
     //structure to store the data of the point
-    class PlanePoint {
+    private class PlanePoint {
         int pointX;
         int pointY;
         int flightNumber;
@@ -32,17 +33,15 @@ public class RadarPanel extends JPanel {
             double latitudeFromCenter = Client.getRadar().getLongitude() - plane.getLongitude();
             double longitudeFromCenter = Client.getRadar().getLatitude() - plane.getLatitude();
 
-            //double scale = Math.min(getWidth(), getHeight()) / (2.0 * radius);
-            double scale = getWidth() / (Pos.distanceMax * 100);
-
-            double smallCircleX = (longitudeFromCenter * scale - smallCircleRadius);
-            double smallCircleY = (latitudeFromCenter * scale - smallCircleRadius);
-            planePoints.add(new PlanePoint((int)smallCircleX, (int)smallCircleY, plane.getFlightNumber()));
+            double smallCircleX = (100 * longitudeFromCenter) / scale - smallCircleRadius;
+            double smallCircleY = (100 * latitudeFromCenter) / scale - smallCircleRadius;
+            planePoints.add(new PlanePoint((int) smallCircleX, (int) smallCircleY, plane.getFlightNumber()));
         }
     }
     
     public RadarPanel() {
         planePoints = new ArrayList<>();
+        setVisible(true);
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -56,10 +55,10 @@ public class RadarPanel extends JPanel {
                 //check if click inside a point
                 for (int i = 0 ; i < planePoints.size() ; i++) {
                     if (mouseX >= planePoints.get(i).pointX && mouseX <= planePoints.get(i).pointX + smallCircleRadius * 2 && mouseY >= planePoints.get(i).pointY && mouseY <= planePoints.get(i).pointY + smallCircleRadius * 2) {
-                        Client.mainFrame.setFlightNumberField(Client.getListAvions().get(i).getFlightNumber());
-                        Client.mainFrame.setSpeedField(Client.getListAvions().get(i).getVitesse());
-                        Client.mainFrame.setAltitudeField(Client.getListAvions().get(i).getAltitude());
-                        Client.mainFrame.setCapField(Client.getListAvions().get(i).getCap());
+                        Client.getMainFrame().setFlightNumberField(Client.getListAvions().get(i).getFlightNumber());
+                        Client.getMainFrame().setSpeedField(Client.getListAvions().get(i).getVitesse());
+                        Client.getMainFrame().setAltitudeField(Client.getListAvions().get(i).getAltitude());
+                        Client.getMainFrame().setCapField(Client.getListAvions().get(i).getCap());
                     }
                 }
             }

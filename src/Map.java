@@ -3,7 +3,8 @@ package ProjectAvion.src;
 import java.util.ArrayList;
 
 public class Map {
-	private Pos positionAirport;
+
+	private final Pos positionAirport;
 	public ArrayList<Avion> closeAvion = new ArrayList<Avion>();
 
 	public Map(Pos p) {
@@ -19,13 +20,4 @@ public class Map {
 			}
 		}
 	}
-
-	public Pos getPositionAirport() {
-		return positionAirport;
-	}
-
-	public ArrayList<Avion> getCloseAvion() {
-		return closeAvion;
-	}
-	
 }
