@@ -32,9 +32,13 @@ public class Server {
         byte[] receive = new byte[65535];
 		ArrayList<Avion> avionList = Data.initAvions();
 
+		//establish connexion with the database
 		connexion = DriverManager.getConnection(URL, USER, PASS);
+		//prepare the insert query
 		String requete = "INSERT INTO AvionsData (FlightNumber, Latitude, Longitude, Vitesse, Altitude, Cap) VALUES (?, ?, ?, ?, ?, ?)";
 		statement = connexion.prepareStatement(requete);
+
+		//execute the query
 		for (Avion a : avionList) {
 			statement.setInt(1, a.getFlightNumber());
 			statement.setDouble(2, a.getLatitude());
@@ -44,6 +48,7 @@ public class Server {
 			statement.setInt(6, a.getCap());
 			statement.executeUpdate();
 		}
+		//close after finishing
 		statement.close();
 		connexion.close();
 

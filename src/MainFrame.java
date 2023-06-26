@@ -27,7 +27,9 @@ public class MainFrame extends JFrame {
         setSize(1000, 700);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
+        //center the window in the middle of the screen
         setLocationRelativeTo(null);
+        //block manuel resize
         setResizable(false);
 
         //create an instance of RadarPanel and set it as the panel for radarDisplay

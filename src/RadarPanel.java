@@ -27,6 +27,7 @@ public class RadarPanel extends JPanel {
     //list of point
     private ArrayList<PlanePoint> planePoints;
 
+    //update point coordinate
     public void updatePoint() {
         planePoints.clear();
         for (Avion plane : Client.getListAvions()) {
@@ -69,7 +70,7 @@ public class RadarPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        //set the color and draw the circle
+        //set the color and draw the main circle and a cross
         g.setColor(Color.BLACK);
         int centerX = getWidth() / 2;
         int centerY = getHeight() / 2;
@@ -78,16 +79,17 @@ public class RadarPanel extends JPanel {
         g.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
         g.drawLine(0, getHeight() / 2, getWidth(), getHeight() / 2);
 
-        //set the color and draw the plane point
+        //set the color and draw the planes points
         g.setColor(Color.BLACK);
         for (int i = 0 ; i < planePoints.size() ; i++) {
+            //draw the small circles
             g.drawOval(centerX + planePoints.get(i).pointX, centerY + planePoints.get(i).pointY, smallCircleRadius * 2, smallCircleRadius * 2);
 
-            //draw the cross inside the small circle
+            //draw the crosses inside the small circles
             g.drawLine(centerX + planePoints.get(i).pointX + smallCircleRadius, centerY + planePoints.get(i).pointY, centerX + planePoints.get(i).pointX + smallCircleRadius, centerY +  planePoints.get(i).pointY + smallCircleRadius * 2);
             g.drawLine(centerX + planePoints.get(i).pointX, centerY + planePoints.get(i).pointY + smallCircleRadius, centerX + planePoints.get(i).pointX + smallCircleRadius * 2, centerY + planePoints.get(i).pointY + smallCircleRadius);
 
-            //draw text above the small circle
+            //draw text above the small circles
             String text1 = "C: " + Client.getListAvions().get(i).getCap();
             int text1X = centerX + planePoints.get(i).pointX;
             int text1Y = centerY + planePoints.get(i).pointY - smallCircleRadius - 3;
