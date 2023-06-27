@@ -20,8 +20,7 @@ public class Server {
 	private static final int SERVER_PORT = 2000;
 	private static final String URL = "jdbc:mysql://localhost:3306/AvionsData";
 	private static final String USER = "root";
-	private static final String PASS = "password";
-
+	private static final String PASS = "root";
 	static Connection connexion = null;
 	static PreparedStatement statement = null;
 
