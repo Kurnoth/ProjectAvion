@@ -34,6 +34,8 @@ public class RadarPanel extends JPanel {
             double latitudeFromCenter = Client.getRadar().getLongitude() - plane.getLongitude();
             double longitudeFromCenter = Client.getRadar().getLatitude() - plane.getLatitude();
 
+            double scale = getWidth() / (Pos.getDistanceMax() * 100);
+
             double smallCircleX = (100 * longitudeFromCenter) / scale - smallCircleRadius;
             double smallCircleY = (100 * latitudeFromCenter) / scale - smallCircleRadius;
             planePoints.add(new PlanePoint((int) smallCircleX, (int) smallCircleY, plane.getFlightNumber()));
