@@ -7,11 +7,11 @@ import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.StringReader;
 import java.net.DatagramPacket;
 
 
 public class MainFrame extends JFrame {
+
     private JPanel mainPanel;
     private JTextField flightNumberField;
     private JTextField speedField;
@@ -19,7 +19,7 @@ public class MainFrame extends JFrame {
     private JTextField capField;
     private JPanel radarDisplay;
     private JButton sendButton;
-    public RadarPanel radarPanel;
+    private RadarPanel radarPanel;
 
     public MainFrame() {
         setContentPane(mainPanel);
@@ -27,10 +27,12 @@ public class MainFrame extends JFrame {
         setSize(1000, 700);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
+        //center the window in the middle of the screen
         setLocationRelativeTo(null);
+        //block manuel resize
         setResizable(false);
 
-        // Create an instance of RadarPanel and set it as the panel for radarDisplay
+        //create an instance of RadarPanel and set it as the panel for radarDisplay
         radarPanel = new RadarPanel();
         radarDisplay.setLayout(new BorderLayout());
         radarDisplay.add(radarPanel);
@@ -38,8 +40,6 @@ public class MainFrame extends JFrame {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //Client.input = flightNumberField.getText() + " " + speedField.getText() + " " + altitudeField.getText() + " " + capField.getText();
-
                 Avion modifiedAvion = null;
                 for (Avion plane : Client.getListAvions()) {
                     if (plane.getFlightNumber() == Integer.parseInt(flightNumberField.getText())) {
@@ -51,7 +51,7 @@ public class MainFrame extends JFrame {
                 }
 
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                ObjectOutputStream objectOutputStream = null;
+                ObjectOutputStream objectOutputStream;
                 try {
                     objectOutputStream = new ObjectOutputStream(outputStream);
                 } catch (IOException ex) {
@@ -89,8 +89,7 @@ public class MainFrame extends JFrame {
         capField.setText(Integer.toString(cap));
     }
 
-    public static void main(String[] args) {
-        MainFrame frame = new MainFrame();
-
+    public RadarPanel getRadarPanel() {
+        return radarPanel;
     }
 }
